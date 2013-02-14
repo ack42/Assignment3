@@ -16,11 +16,17 @@
 
 @implementation ViewController
 
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
     self.title = @"Bluth's Banana Stand";
+    
+    [_selectAll setTitle:@"Select All" forState:UIControlStateNormal];
+    [_removeAll setTitle:@"Empty" forState:UIControlStateNormal];
+    [_replaceAll setTitle:@"Fill" forState:UIControlStateNormal];
+    
     
     _allSelected = NO;
     
@@ -59,20 +65,40 @@
         [_selectAll setTitle:@"Select All" forState:UIControlStateNormal];
     }
     [_cartView reloadData];
+    
 }
 
 //Should remove all of the fruit in the cart.
 -(IBAction)removeAllFruitInCart:(id)sender
 {
+
+        [_cart removeAllObjects];
+        [_cartView reloadData];
+    
+    _removeAll.enabled = NO; // disable my button
+    _replaceAll.enabled = YES; // enable my button
     
 }
 
 //should add 50 bananas to the cart and display them!
 -(IBAction)fillCartWithBananas:(id)sender
 {
+    for(int i = 0; i < 50; i++){
+        NSString * fruitName = [NSString stringWithFormat:@"Banana %d", i];
+        
+        if((i % 10) == 0){
+            fruitName = [NSString stringWithFormat:@"Free Banana %d", i];
+        }
+        
+        Fruit * anonFruit = [[Fruit alloc] initWithWithName:fruitName andColor:@"Yellow" andShape:@"Curved"];
+        anonFruit.url = @"http://en.m.wikipedia.org/wiki/Banana";
+        [_cart addObject:anonFruit];
+        [_cartView reloadData];
+    }
     
+    _removeAll.enabled = YES; // disable my button
+    _replaceAll.enabled = NO; // enable my button
 }
-
 
 
 #pragma mark UITableView dataSource and delegate methods
@@ -95,7 +121,7 @@
 {
     UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:@"TableViewCell"];
     if(cell == nil){
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:@"TableViewCell"];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue2 reuseIdentifier:@"TableViewCell"];
     }
     
     if([_cart count] == 0){
